@@ -76,10 +76,12 @@ exports.addSocketId = (req) => {
   });
 };
 
-exports.otherUserList = (req) => {
+exports.otherUserList = () => {
 
   let query = {
-    where: { id: { [Op.not]: req.id } }
+    where: {
+      isOnline: true,
+    }
   }
 
   return new Promise(async (resolve, reject) => {
@@ -185,4 +187,34 @@ exports.getMessages = (req) => {
     }
   });
 }
+
+exports.removeUser = (req) => {
+  let data = {
+    isOnline: false,
+  }
+  let query = {
+    where: {
+      socketId: req.socketId
+    },
+    returning: true,
+  }
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      User.update(data, query).then(updatedTask => {
+        data = {
+          status: true,
+          data: updatedTask,
+          message: "remove updated successfully!",
+        }
+        resolve(data);
+      })
+        .catch(err => {
+          reject(err)
+        });
+    } catch (error) {
+      reject(error)
+    }
+  });
+};
 

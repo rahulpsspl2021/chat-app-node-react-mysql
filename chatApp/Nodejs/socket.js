@@ -12,14 +12,15 @@ io.on('connection', (socket) => {
         let getUserDeails, otherUserList;
         if (addSocketInDb.status) {
             getUserDeails = await authController.getUser(data);
-            otherUserList = await authController.otherUserList(data);
+            otherUserList = await authController.otherUserList();
         }
 
         var data = {
             loginUser: getUserDeails.status ? getUserDeails.data : {},
             userList: otherUserList.status ? otherUserList.data : []
         }
-        socket.emit("addUserResponce", data)
+        io.to('room1').emit("userListResponce", data.userList)
+        socket.emit("addUserResponce", data.loginUser)
     })
     socket.on("message", async (data) => {
         var insertMessage = await authController.insertMessages(data)
@@ -34,6 +35,16 @@ io.on('connection', (socket) => {
         var messages = await authController.getMessages(data)
         //socket.emit("messageResponce", messages)
         io.to('room1').emit("messageResponce", messages)
+    })
+    socket.on("disconnect", async () => {
+        let data = {};
+        console.log("disconnect");
+        data.isOnline = false;
+        data.socketId = socket.id;
+        var removeuser = await authController.removeUser(data);
+        var otherUserList = await authController.otherUserList();
+        //socket.emit("messageResponce", messages)
+        io.to('room1').emit("userListResponce", otherUserList.status ? otherUserList.data : [])
     })
 
 });

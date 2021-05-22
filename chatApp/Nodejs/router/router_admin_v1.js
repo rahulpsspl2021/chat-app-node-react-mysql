@@ -2,12 +2,12 @@
 //                                  This is API Router for APP                                     //
 /********************************************************************************************************* */
 
-const validations = require('../validation/index');
-const verify = require('./../middleware/verify')
+//const validations = require('../validation/index');
+//const verify = require('./../middleware/verify')
 const authController = require('./../controllers/auth');
 const apiEndpint = "/api/v1";
-const authMiddleware = require('./../middleware/authJwt');
-const userController = require('./../controllers/user');
+//const authMiddleware = require('./../middleware/authJwt');
+//const userController = require('./../controllers/user');
 
 const { validate, ValidationError } = require('express-validation')
 

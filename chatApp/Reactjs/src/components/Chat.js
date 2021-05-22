@@ -119,15 +119,24 @@ const Chat = (props) => {
         socket.emit('getMessages', setMessage);
     }
 
+    const disconnectSocket = () => {
+        console.log('Disconnecting socket...');
+        if (socket) socket.disconnect();
+    }
+
 
 
     useEffect(() => {
         if (currentUser) {
             socket.emit('addUser', currentUser.data);
             socket.on('addUserResponce', payload => {
-                console.log("payload ==>", payload)
-                setLoginUser(payload.loginUser)
-                setUserList(payload.userList)
+                setLoginUser(payload)
+                //setUserList(payload.userList)
+            });
+            socket.on('userListResponce', payload => {
+                //console.log("payload ==>", payload)
+                //setLoginUser(payload.loginUser)
+                setUserList(payload)
             });
             socket.on('messageResponce', payload => {
                 console.log("payload", payload)
@@ -138,6 +147,10 @@ const Chat = (props) => {
                 console.log("payload", payload)
                 setMessages(payload.data)
             });
+
+            return () => {
+                disconnectSocket();
+            }
         }
     }, []);
 
@@ -160,18 +173,22 @@ const Chat = (props) => {
                                     <ul className="contacts">
                                         {userList && userList.length > 0 && userList.map((user, i) => {
                                             return (
-                                                <li className={selectedUser.id === user.id ? 'active' : ''} onClick={() => chatWithUser(user)} key={user.id}>
-                                                    <div className="d-flex bd-highlight">
-                                                        <div className="img_cont">
-                                                            <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" className="rounded-circle user_img" />
-                                                            <span className="online_icon"></span>
-                                                        </div>
-                                                        <div className="user_info">
-                                                            <span>{user.userId}</span>
-                                                            <p>{user.name} is {user.isOnline ? 'online' : 'offline'}</p>
-                                                        </div>
-                                                    </div>
-                                                </li>
+                                                <>
+                                                    {user.id !== loginUser.id &&
+                                                        <li className={selectedUser.id === user.id ? 'active' : ''} onClick={() => chatWithUser(user)} key={user.id}>
+                                                            <div className="d-flex bd-highlight">
+                                                                <div className="img_cont">
+                                                                    <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" className="rounded-circle user_img" />
+                                                                    <span className="online_icon"></span>
+                                                                </div>
+                                                                <div className="user_info">
+                                                                    <span>{user.name}</span>
+                                                                    <p>{user.userId} is {user.isOnline ? 'online' : 'offline'}</p>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                </>
                                             )
                                         })}
 

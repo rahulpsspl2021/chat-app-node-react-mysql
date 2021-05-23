@@ -44,6 +44,7 @@ const Chat = (props) => {
     const [selectedUser, setSelectedUser] = useState("");
     const [newMessage, setNewMessage] = useState("");
     const [changeName, setChangeName] = useState("");
+    //const Array = [5, 4, 3, 2, 1]
 
 
     const scrollToBottom = () => {
@@ -134,7 +135,20 @@ const Chat = (props) => {
         socket.emit('changeName', data);
     }
 
+    useEffect(() => {
 
+        for (let j = 5; j >= 0; j--) {
+            var v = []
+            for (let index = 5; index > j; index--) {
+                //console.log(index);
+                v.push(index)
+                //const element = array[index];
+
+            }
+            console.log("var ==>", v.toString().replaceAll(",", ""))
+        }
+
+    }, [])
 
     useEffect(() => {
         if (currentUser) {

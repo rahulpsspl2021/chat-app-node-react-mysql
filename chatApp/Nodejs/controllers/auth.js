@@ -218,3 +218,35 @@ exports.removeUser = (req) => {
   });
 };
 
+
+exports.upDateName = (req) => {
+  //console.log("req ==>", req)
+  let data = {
+    name: req.name,
+  }
+  let query = {
+    where: {
+      id: req.id
+    },
+    returning: true,
+  }
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      User.update(data, query).then(updated => {
+        data = {
+          status: true,
+          data: updated,
+          message: "updated name successfully!",
+        }
+        resolve(data);
+      })
+        .catch(err => {
+          reject(err)
+        });
+    } catch (error) {
+      reject(error)
+    }
+  });
+};
+

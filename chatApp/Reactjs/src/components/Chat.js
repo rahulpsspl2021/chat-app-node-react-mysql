@@ -43,6 +43,7 @@ const Chat = (props) => {
     const [userList, setUserList] = useState("");
     const [selectedUser, setSelectedUser] = useState("");
     const [newMessage, setNewMessage] = useState("");
+    const [changeName, setChangeName] = useState("");
 
 
     const scrollToBottom = () => {
@@ -124,6 +125,15 @@ const Chat = (props) => {
         if (socket) socket.disconnect();
     }
 
+    const changeNameHandlar = () => {
+        //console.log("changeName ==>", changeName)
+        let data = {
+            name: changeName,
+            id: loginUser.id
+        }
+        socket.emit('changeName', data);
+    }
+
 
 
     useEffect(() => {
@@ -139,12 +149,15 @@ const Chat = (props) => {
                 setUserList(payload)
             });
             socket.on('messageResponce', payload => {
-                console.log("payload", payload)
+                //console.log("payload", payload)
                 setMessages(payload.data)
                 setNewMessage("")
             });
+            socket.on('changeNameResponce', payload => {
+                console.log("payload ==>", payload)
+            });
             socket.on('getMessagesResponce', payload => {
-                console.log("payload", payload)
+                //console.log("payload", payload)
                 setMessages(payload.data)
             });
 
@@ -162,12 +175,14 @@ const Chat = (props) => {
                         <div className="row justify-content-center h-100">
                             <div className="col-md-4 col-xl-3 chat"><div className="card mb-sm-3 mb-md-0 contacts_card">
                                 <div className="card-header">
-                                    {/* <div className="input-group">
-                                        <input type="text" placeholder="Search..." name="" className="form-control search" />
-                                        <div className="input-group-prepend">
+                                    <div className="input-group">
+                                        {loginUser.name}
+                                        <input type="text" placeholder="Change Name" name="changeName" className="form-control search" value={changeName} onChange={(e) => setChangeName(e.target.value)} />
+                                        {/* <div className="input-group-prepend">
                                             <span className="input-group-text search_btn"><i className="fas fa-search"></i></span>
-                                        </div>
-                                    </div> */}
+                                        </div> */}
+                                        <button className="btn btn-primary btn-block" onClick={() => changeNameHandlar()}> Change name </button>
+                                    </div>
                                 </div>
                                 <div className="card-body contacts_body">
                                     <ul className="contacts">

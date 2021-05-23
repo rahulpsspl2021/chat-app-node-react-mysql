@@ -36,6 +36,16 @@ io.on('connection', (socket) => {
         //socket.emit("messageResponce", messages)
         io.to('room1').emit("messageResponce", messages)
     })
+    socket.on("changeName", async (data) => {
+        console.log("data ==>", data);
+        var upDateName = await authController.upDateName(data)
+        if (upDateName.status) {
+            var getUserDeails = await authController.getUser(data);
+            var otherUserList = await authController.otherUserList();
+        }
+        socket.emit("addUserResponce", getUserDeails.status ? getUserDeails.data : {})
+        io.to('room1').emit("userListResponce", otherUserList.status ? otherUserList.data : [])
+    })
     socket.on("disconnect", async () => {
         let data = {};
         console.log("disconnect");
